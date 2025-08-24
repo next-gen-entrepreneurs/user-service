@@ -3,10 +3,11 @@ kind: Service
 metadata:
   name: user-service
 spec:
+  type: LoadBalancer
+  loadBalancerIP: 20.87.68.115   # choose an available IP
+  ports:
+    - port: 8000
+      targetPort: 8000
   selector:
     app: user-service
-  ports:
-    - protocol: TCP
-      port: 8000
-      targetPort: 8000
-  type: LoadBalancer
+

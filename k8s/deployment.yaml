@@ -43,7 +43,7 @@ spec:
             secretKeyRef:
               name: jwt-keys-secret
               key: PRIVATE_KEY
-        - name: DJANGO_SECRET_KEY
+        - name: SECRET-KEY
           valueFrom:
             secretKeyRef:
               name: user-service-secret

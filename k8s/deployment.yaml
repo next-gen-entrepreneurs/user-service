@@ -1,3 +1,4 @@
+# The corrected deployment manifest
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,14 +17,14 @@ spec:
     spec:
       containers:
       - name: user-service
-        image: ghcr.io/next-gen-entrepreneurs/user-service:v1.1
+        image: ghcr.io/next-gen-entrepreneurs/user-service:latest
         ports:
         - containerPort: 8000
         env:
         - name: DATABASE_URL
           valueFrom:
             secretKeyRef:
-              name: user-db-secret
+              name: user-service-secret
               key: DATABASE_URL
         - name: KAFKA_BROKER
           value: kafka:9092
@@ -60,4 +61,4 @@ spec:
           initialDelaySeconds: 5
           periodSeconds: 5
       imagePullSecrets:
-      - name: ghcr-secret
+        - name: ghcr-secret

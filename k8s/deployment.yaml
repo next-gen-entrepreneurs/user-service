@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user-service
+  labels:
+    app: user-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: user-service
+  template:
+    metadata:
+      labels:
+        app: user-service
+    spec:
+      containers:
+      - name: user-service
+        image: ghcr.io/next-gen-entrepreneurs/user-service:v1.1
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: user-db-secret
+              key: DATABASE_URL
+        - name: KAFKA_BROKER
+          value: kafka:9092
+        - name: ENV
+          valueFrom:
+            configMapKeyRef:
+              name: user-service-config
+              key: ENV
+        - name: PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-keys-secret
+              key: PUBLIC_KEY
+        - name: PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: jwt-keys-secret
+              key: PRIVATE_KEY
+        - name: DJANGO_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: user-service-secret
+              key: DJANGO_SECRET_KEY
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      imagePullSecrets:
+      - name: ghcr-secret
